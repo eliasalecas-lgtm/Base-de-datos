@@ -20,21 +20,36 @@ select modelo from vehiculo where idMarca=1;
 select* from alquiler where (kmFinal-kmInicio)= (select max(kmFinal-kmInicio) from alquiler);
 -- Obtener los datos del cliente que llevó a cabo el alquiler en el que se hicieron más kilómetros.
 select* from cliente where dni in (
-select dniCliente from alquiler where (kmFinal-kmInicio)= (
-select max(kmFinal-kmInicio) from alquiler));
+    select dniCliente from alquiler where (kmFinal-kmInicio)= (
+        select max(kmFinal-kmInicio) from alquiler));
 /* Obtener el número de alquileres agrupados por días, es decir,
    el número de alquileres con 1 día, el número de alquileres con 2 días, etc. */
 select nDias,count(*) from alquiler group by nDias order by nDias;
 -- Obtener el número de marcas de cada país.
-select pais,count(*) from marca group by pais;
+select pais,count(*) from marca group by pais order by count(*) desc limit 1;
 -- Obtener el número de oficinas por localidad en la provincia de Palencia.
 select localidad,count(*) from oficina where provincia='Palencia' group by localidad ;
 -- Obtener los datos del vehículo más alquilado.
 select* from vehiculo where idVehiculo in (select max(idVehiculo) from alquiler);
+-- Obtener los datos del vehículo que ha recorrido más kilómetros.
+select* from vehiculo where idVehiculo in (
+select idVehiculo from alquiler where (kmFinal-kmInicio)= (
+select max(kmFinal-kmInicio) from alquiler));
+-- Obtener los datos de la oficina que realiza más alquileres (oficina de inicio).
+select* from oficina where codigoOficina in (
+(select oficinaInicio from alquiler group by oficinaInicio having count(*)=
+   (select max(alquileres) from (select count(*) as alquileres from alquiler group by oficinaInicio)
+       as tabla_derivada)));
 
-select count(*) from alquiler;
+
+
+
+select max(alquileres) from (select count(*) as alquileres from alquiler group by oficinaInicio) as t;
+
+
+select* from alquiler;
 
 show tables;
-describe vehiculo;
+describe oficina;
 describe alquiler;
 select* from oficina;
