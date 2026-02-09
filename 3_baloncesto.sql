@@ -32,29 +32,76 @@ select* from jugador where idJugador in (
     select idJ from (select idJ,avg(valoracion) from datosjugadorpartido group by idJ having
         avg(valoracion)=(select max(t) from (
             select idJ,avg(valoracion) t from datosjugadorpartido group by idJ) as t1))as t2);
-
 SELECT j.* FROM jugador j
          JOIN ( SELECT idJ, AVG(valoracion) AS media FROM datosjugadorpartido GROUP BY idJ) m
               ON j.idJugador = m.idJ
 WHERE m.media = ( SELECT MAX(media) FROM (
              SELECT AVG(valoracion) AS media FROM datosjugadorpartido GROUP BY idJ) x);
+-- Obtener los datos del jugador que más puntos ha anotado de media.
+select j.* from jugador j join (
+    select idJ, avg(puntos) as media from datosjugadorpartido group by idJ) m
+        on j.idJugador=m.idJ where m.media=(
+            select max(media) from (
+                select avg(puntos) as media from datosjugadorpartido group by idJ) n);
+-- Obtener los datos del jugador que ha sido titular más veces.
+select j.* from jugador j join (
+    select idJ,count(*) as titular1 from datosjugadorpartido where titular=1  group by idJ) m
+        on j.idJugador=m.idJ where m.titular1=(
+            select max(titular1) from (select count(*) as titular1 from datosjugadorpartido where titular=1 group by idJ)t3);
+-- Obtener los datos del jugador que ha sido menos veces titular.
+select j.* from jugador j join (
+    select idJ,count(*) as titular1 from datosjugadorpartido where titular=0  group by idJ) m
+        on j.idJugador=m.idJ where m.titular1=(
+            select max(titular1) from (select count(*) as titular1 from datosjugadorpartido where titular=0 group by idJ)t3);
+/* Obtener los datos del jugador cuya valoración media es la más alta y que haya sido titular en,
+al menos, 4 partidos.*/
+select j.* from jugador j join (
+    select idj,avg(valoracion) as valomax from datosjugadorpartido group by idj) m
+        on j.idJugador=m.idJ join (
+            select idj,count(*) as titular1 from datosjugadorpartido where titular=1 group by idj) n
+                on m.idJ=n.idJ where m.valomax=(
+                    select max(valomax) from (select idj,avg(valoracion) as valomax from datosjugadorpartido group by idj)p)
+                         and n.titular1>=4;
+-- Obtener los nombres de los equipos.
+select nombre from equipo;
+-- Obtener el nombre, apellidos y altura de aquellos jugadores que son menores de 25 años.
+select nombre,apellidos,alturaCM from jugador where edad<25;
+-- Obtener la localidad de un equipo a partir de su id.
+select localidad from equipo where idEquipo=1;
+-- Obtener el nombre y apellidos de los jugadores de Perú.
+select nombre,apellidos from jugador where nacionalidad='peruana';
+-- Obtener la puntuación de un determinado partido.
+select idP,sum(puntos) from datosjugadorpartido group by idP;
+-- Obtener los datos de los equipos cuya localidad empieza por la letra M.
+select* from equipo where localidad like 'M%';
+-- Obtener los datos de los jugadores que miden entre 1,90 y 2 metros (ambos incluidos).
+select* from jugador where alturaCM between 190 and 200;
+/* Obtener los equipos que no pertenecen a una determinada lista de localidades (la lista la
+debes construir tú en la propia consulta). */
+select* from equipo where localidad not in ('Madrid', 'Valencia', 'Sevilla');
+-- Obtener los datos de los jugadores que tienen entre 20 y 30 años.
+select* from jugador where edad between 20 and 30;
+-- Obtener los datos de los jugadores obtenidos en orden alfabético por apellidos y nombre.
+select* from jugador order by apellidos,nombre;
+/* Obtener los datos de los jugadores obtenidos en orden alfabético por apellidos y nombre y en
+orden descendente de edad (los más mayores primero). */
+select* from jugador order by apellidos,nombre,edad desc ;
+-- Obtener los 10 partidos con la mayor diferencia de puntos.
+select p.* from partido p join
+    (select idPartido,abs(puntosLocal-puntosVisitante) as diferencia from partido order by diferencia desc limit 10) t1
+        on p.idPartido=t1.idPartido;
 
 
-
-
-
+select idPartido,abs(puntosLocal-puntosVisitante) as diferencia from partido order by diferencia desc limit 10;
 select* from datosjugadorpartido;
-select* from equipo;
+select* from partido;
 
 show tables;
 describe datosjugadorpartido;
 use baloncesto2;
 
--- Obtener los datos del jugador que más puntos ha anotado de media.
--- Obtener los datos del jugador que ha sido titular más veces.
--- Obtener los datos del jugador que ha sido menos veces titular.
-/* Obtener los datos del jugador cuya valoración media es la más alta y que haya sido titular en,
-al menos, 4 partidos.*/
+
+
 
 
 
