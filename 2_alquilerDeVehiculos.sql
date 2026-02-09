@@ -51,4 +51,3 @@ select idMarca,modelo from vehiculo where idVehiculo in (
     select idVehiculo from alquiler group by idVehiculo having count(*)=(
         select max(alquileres) from (
             select count(*) as alquileres from alquiler group by idVehiculo) as tabla_1));
-
