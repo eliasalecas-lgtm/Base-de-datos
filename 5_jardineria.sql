@@ -22,3 +22,4 @@ select* from pago where (fecha_pago =(select min(fecha_pago) from pago where cod
 
 show tables;
 describe pedido;
+describe oficina;

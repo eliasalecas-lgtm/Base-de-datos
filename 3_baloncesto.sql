@@ -90,15 +90,25 @@ select* from jugador order by apellidos,nombre,edad desc ;
 select p.* from partido p join
     (select idPartido,abs(puntosLocal-puntosVisitante) as diferencia from partido order by diferencia desc limit 10) t1
         on p.idPartido=t1.idPartido;
+/* Obtener los datos de los equipos cuya localidad contiene una letra “a” y una letra “o” en ese
+orden y en cualquier posición.*/
+select* from equipo where localidad like '%a%o%' ;
+-- Mostrar la cantidad de jugadores que tiene cada equipo junto con el id del equipo.
+select e.idEquipo,e.nombre,count(*) from equipo e join jugador j on e.idEquipo = j.idEquipo
+    group by e.idEquipo;
+-- Obtener la altura media de los jugadores de cada equipo.
+select e.nombre,m.media from equipo e join (select idEquipo,avg(alturaCM) as media from jugador group by idEquipo) m on
+    e.idEquipo=m.idEquipo;
+/*Obtener el número de jugadores mayores de 25 años que hay en cada equipo, pero solo
+para aquellos equipos que tienen más de 3 jugadores mayores de 25 años.*/
+select j.idEquipo, count(*) as mayores_25 from jugador j join  (
+    select e.idEquipo,count(*) as may25 from equipo e join jugador j on e.idEquipo = j.idEquipo
+        where edad>25 group by e.idEquipo having may25>3) m on j.idEquipo=m.idEquipo group by j.idEquipo;
+-- Obtener los nombres de los equipos que tienen jugadores mayores de 30 años.
+select e.nombre from equipo e join jugador j on e.idEquipo = j.idEquipo where j.edad>30 group by e.nombre;
+-- Obtener los datos de los jugadores que miden más que la media de altura de toda la liga.
+select* from jugador where alturaCM>(select avg(alturaCM) from jugador);
 
-
-select idPartido,abs(puntosLocal-puntosVisitante) as diferencia from partido order by diferencia desc limit 10;
-select* from datosjugadorpartido;
-select* from partido;
-
-show tables;
-describe datosjugadorpartido;
-use baloncesto2;
 
 
 
