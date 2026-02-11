@@ -25,7 +25,7 @@ select* from alumno where edad in (select max(edad) from alumno);
 select a.* from alumno a join matricula m on a.dni=m.alumno where m.letra not in ('B','C');
 /* Obtener los datos del profesor con más antigüedad que el resto de sus compañeros. Utilizar
 el cuantificador ALL. */
-select* from profesor where antiguedad <= all (select(antiguedad) from profesor);
+select* from profesor where antiguedad <= all (select antiguedad from profesor);
 
 
 
