@@ -90,6 +90,8 @@ select* from jugador order by apellidos,nombre,edad desc ;
 select p.* from partido p join
     (select idPartido,abs(puntosLocal-puntosVisitante) as diferencia from partido order by diferencia desc limit 10) t1
         on p.idPartido=t1.idPartido;
+select* from partido where idPartido in (select idPartido from (select idPartido,abs(puntosLocal-puntosVisitante) as diferencia from partido order by diferencia desc limit 10) t1);
+select* from partido order by abs(puntosLocal-puntosVisitante) desc limit 10;
 /* Obtener los datos de los equipos cuya localidad contiene una letra “a” y una letra “o” en ese
 orden y en cualquier posición.*/
 select* from equipo where localidad like '%a%o%' ;
